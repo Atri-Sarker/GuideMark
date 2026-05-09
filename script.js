@@ -64,27 +64,35 @@ const guideEditScreen = document.getElementById("guideEditScreen");
 const guideListScreen = document.getElementById("guideListScreen");
 const inProgressScreen = document.getElementById("inProgressScreen");
 const guideInProgressScreen = document.getElementById("guideInProgressScreen");
+// Footer Radio
+const guideListRadio = document.getElementById("guideListRadio");
+const inProgressRadio = document.getElementById("inProgressRadio");
+const footer = document.getElementById("footerRadio");
 // Function for switching screens
 function switchScreen(screenType) {
+    renderInProgressGuideList()
     // Hide all screens
-    // document.getElementById("guideListScreen").style.display = "none";
-    // document.getElementById("inProgressScreen").style.display = "none";
-    // document.getElementById("completedScreen").style.display = "none";
-    // document.getElementById("guideEditScreen").style.display = "none";
-    // document.getElementById("guideInProgressScreen").style.display = "none";
-    // // Show the selected screen
-    // if (screenType === screenTypes.GUIDE_LIST) {
-    //     document.getElementById("guideListScreen").style.display = "block";
-    // } else if (screenType === screenTypes.IN_PROGRESS) {
-    //     document.getElementById("inProgressScreen").style.display = "block";
-    // } else if (screenType === screenTypes.COMPLETED) {
-    //     document.getElementById("completedScreen").style.display = "block";
-    // } else if (screenType === screenTypes.GUIDE_EDIT) {
-    //     document.getElementById("guideEditScreen").style.display = "block";
-    // } else if (screenType === screenTypes.GUIDE_IN_PROGRESS) {
-    //     document.getElementById("guideInProgressScreen").style.display = "block";
-    // }
-    // Set the current screen variable
+    guideEditScreen.style.display = "none";
+    inProgressScreen.style.display = "none";
+    guideInProgressScreen.style.display = "none";
+    guideListScreen.style.display = "none";
+    footer.style.display = "none";
+    // Show the selected screen
+    if (screenType === screenTypes.GUIDE_EDIT) {
+        guideEditScreen.style.display = "block";
+    } else if (screenType === screenTypes.IN_PROGRESS) {
+        inProgressScreen.style.display = "block";
+        footer.style.display = "block";
+        // Set the in progress radio to checked
+        inProgressRadio.checked = true;
+    } else if (screenType === screenTypes.GUIDE_IN_PROGRESS) {
+        guideInProgressScreen.style.display = "block";
+    } else if (screenType === screenTypes.GUIDE_LIST) {
+        guideListScreen.style.display = "block";
+        // Set the guide list radio to checked        
+        guideListRadio.checked = true;
+        footer.style.display = "block";
+    }
     currentScreen = screenType;
 }
 
@@ -454,7 +462,65 @@ function renderProgress() {
     // Append the buttons to the content div
     stepContent.appendChild(backButton);
     stepContent.appendChild(nextButton);
+    // Append an exit button that takes you back to the in progress guide list
+    const exitButton = document.createElement("button");
+    exitButton.innerText = "Exit";
+    exitButton.addEventListener("click", () => {
+        switchScreen(screenTypes.IN_PROGRESS);
+        currentGuideInProgress = null;
+    });
+    stepContent.appendChild(exitButton);
     // Append the step content to the guide in progress screen
     guideInProgressScreen.appendChild(stepContent);
 }
+
+// Function for rendering the in-progress guide list
+function renderInProgressGuideList() {
+    inProgressScreen.innerHTML = "";
+    // For each in-progress guide, create a div showing the title, progress bar, and a continue button that takes you to the guide in progress screen for that guide
+    inProgressGuides.forEach(guide => {
+        const guideBox = document.createElement("div");
+        const guideTitle = document.createElement("h2");
+        guideTitle.innerText = guide.title;
+        guideBox.appendChild(guideTitle);
+        const progressBar = document.createElement("progress");
+        progressBar.value = guide.progress +  1;
+        progressBar.max = guide.steps.length;
+        guideBox.appendChild(progressBar);
+        const continueButton = document.createElement("button");
+        continueButton.innerText = "Continue";
+        continueButton.addEventListener("click", () => {
+            continueGuide(guide.id);
+        });
+        guideBox.appendChild(continueButton);
+
+        // Add a delete button
+        // Label it "complete" if the guide is fully completed, and "delete" if it's not fully completed
+        const deleteButton = document.createElement("button");
+        if (guide.progress + 1 === guide.steps.length) {
+            deleteButton.innerText = "Complete";
+        } else {
+            deleteButton.innerText = "Delete";
+        }
+        deleteButton.addEventListener("click", () => {
+            const index = inProgressGuides.findIndex(g => g.id === guide.id);
+            if (index !== -1) {
+                inProgressGuides.splice(index, 1);
+                renderInProgressGuideList();
+            }
+        });
+        guideBox.appendChild(deleteButton);
+        inProgressScreen.appendChild(guideBox);
+    });
+}
+
+// Connect radios
+guideListRadio.addEventListener("change", () => {
+    switchScreen(screenTypes.GUIDE_LIST);
+});
+
+inProgressRadio.addEventListener("change", () => {
+    switchScreen(screenTypes.IN_PROGRESS);
+});
+
 main();

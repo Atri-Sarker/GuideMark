@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guidemark</title>
     <!-- MY CSS -->
-    <link rel="stylesheet" href="simple.css">
+    <link rel="stylesheet" href="box.css">
 </head>
 <body>
     <div id="guideEditScreen" class="screen"></div>
     <div id="guideListScreen" class="screen"></div>
     <div id="inProgressScreen" class="screen"></div>
     <div id="guideInProgressScreen" class="screen"></div>
+    <div id="footerRadio">
+        <input type="radio" id="guideListRadio" name="view" value="guideList" checked>
+        <label for="guideListRadio">Guide List</label>
+        <input type="radio" id="inProgressRadio" name="view" value="inProgress">
+        <label for="inProgressRadio">In Progress</label>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

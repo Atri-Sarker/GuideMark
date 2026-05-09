@@ -4,3 +4,9 @@
 #guideListScreen {
     background-color: green;
 }
+#guideInProgressScreen {
+    background-color: blue;
+}
+#inProgressScreen {
+    background-color: yellow;
+}

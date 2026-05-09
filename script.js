@@ -60,6 +60,7 @@ const classNames = {
     ADD_STEP_BUTTON: "add-step-button",
     SAVE_BUTTON: "save-button",
     EXIT_BUTTON: "exit-button",
+    NEW_GUIDE_BUTTON: "new-guide-button"
 }
 
 // Variables for selection

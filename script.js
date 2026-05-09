@@ -49,6 +49,19 @@ const screenTypes = {
     GUIDE_IN_PROGRESS: "guideInProgress"
 }
 
+// CLASS NAMES
+const classNames = {
+    GUIDE_BOX: "guide-box",
+    EDIT_BUTTON: "edit-button",
+    START_BUTTON: "start-button",
+    PROGRESS_BAR: "progress-bar",
+    CONTINUE_BUTTON: "continue-button",
+    DELETE_BUTTON: "delete-button",
+    ADD_STEP_BUTTON: "add-step-button",
+    SAVE_BUTTON: "save-button",
+    EXIT_BUTTON: "exit-button",
+}
+
 // Variables for selection
 // Variable for guide being edited
 let currentGuideEdit = null;
@@ -304,6 +317,8 @@ function renderGuideListScreen() {
     function createGuideBox(guide) {
         // New div
         const guideBox = document.createElement("div");
+        // Assign class name for styling
+        guideBox.className = classNames.GUIDE_BOX;
         // Guide title
         const guideTitle = document.createElement("h2");
         guideTitle.innerText = guide.title;
@@ -311,6 +326,8 @@ function renderGuideListScreen() {
         // Guide Edit Button
         const editButton = document.createElement("button");
         editButton.innerText = "Edit";
+        // Assign class
+        editButton.className = classNames.EDIT_BUTTON;
         editButton.addEventListener("click", () => {
             editGuide(guide.id);
         }
@@ -319,6 +336,8 @@ function renderGuideListScreen() {
         // Guide Start Button
         const startButton = document.createElement("button");
         startButton.innerText = "Start";
+        // Assign class
+        startButton.className = classNames.START_BUTTON;
         // Start Function
         startButton.addEventListener("click", () => {
             let newId = startGuide(guide.id);
@@ -336,6 +355,8 @@ function renderGuideListScreen() {
     // Button for creating a new guide
     const newGuideButton = document.createElement("button");
     newGuideButton.innerText = "Create New Guide";
+    // Assign class name for styling
+    newGuideButton.className = classNames.NEW_GUIDE_BUTTON;
     newGuideButton.addEventListener("click", () => {
         createNewGuide();
         renderGuideListScreen();

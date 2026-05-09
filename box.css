@@ -1,0 +1,83 @@
+body {
+      background: #000510;
+      color: white;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Press Start 2P', monospace;
+      position: relative;
+}
+
+.screen {
+    background: white;
+    flex: 1;
+    display: grid;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+/* Rectangle boxes, with padding and rounded corners */
+.guide-box {
+    background-color: aliceblue;
+    border: #000510 solid 6px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+     position: relative;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+      text-align: center;
+      padding: 1rem;
+}
+
+
+#guideEditScreen {
+    background-color: red;
+}
+#guideListScreen {
+    background-color: green;
+}
+#guideInProgressScreen {
+    background-color: blue;
+}
+#inProgressScreen {
+    background-color: yellow;
+}
+
+#breakSpace {
+    height: 60px;
+}
+/* Footer Radio goes to bottom */
+#footerRadio {
+    background-color: black;
+    position: fixed;
+    z-index: 30;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Default label style */
+label {
+  cursor: pointer;
+  padding: 5px 10px;
+  font-family: sans-serif;
+  flex:1;
+  color: #333;
+  background-color: #25231a;
+  font-size: 32px;
+}
+
+/* Style for the label of the checked radio button */
+input[type="radio"]:checked + label {
+  font-weight: bold;
+  color: #007bff; /* Example: Blue text when selected */
+  background-color: #cfa519;
+}
+input[type="radio"] {
+  display: none;
+}

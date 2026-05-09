@@ -1,0 +1,141 @@
+body {
+      background: #000510;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Press Start 2P', monospace;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.05; }
+      to { opacity: 1; }
+    }
+
+    .scanline {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,180,0.015) 2px,
+        rgba(0,255,180,0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, #000510 100%);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .content {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .subtitle-top {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      color: #00ffb4;
+      letter-spacing: 0.5em;
+      opacity: 0.8;
+    }
+
+    .title {
+      font-size: clamp(3rem, 10vw, 6rem);
+      color: #00ffb4;
+      text-shadow: 0 0 10px #00ffb4, 0 0 30px #00c896;
+      animation: flicker 6s infinite;
+    }
+
+    @keyframes flicker {
+      0%,95%,100%{opacity:1}
+      96%{opacity:0.85}
+      97%{opacity:1}
+      98%{opacity:0.7}
+      99%{opacity:1}
+    }
+
+    .tagline {
+      font-family: 'VT323', monospace;
+      font-size: 1.2rem;
+      color: #4dffd9;
+      letter-spacing: 0.2em;
+      opacity: 0.7;
+    }
+
+    .divider {
+      width: 300px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #00ffb4, transparent);
+      opacity: 0.4;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-next {
+      font-family: 'VT323', monospace;
+      font-size: 1.2rem;
+      padding: 0.6rem 1.5rem;
+      color: #00ffb4;
+      border: 2px solid #00ffb4;
+      background: transparent;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-next:hover {
+      background: rgba(0,255,180,0.12);
+      transform: scale(1.05);
+    }
+
+    .press-start {
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      color: #00ffb4;
+      animation: blink 1.4s infinite;
+    }
+
+    @keyframes blink {
+      0%,49%{opacity:0.7}
+      50%,100%{opacity:0}
+    }
+
+    .footer-text {
+      font-family: 'VT323', monospace;
+      font-size: 0.8rem;
+      color: #1a2a1a;
+      letter-spacing: 0.3em;
+    }

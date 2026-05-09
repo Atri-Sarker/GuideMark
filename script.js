@@ -40,3 +40,421 @@
 // Progress is automatically saved if in progress mode.
 // If it's a readthrough step. Clicking a button takes user to next step.
 // If it's a submission step, there's a button to submit an image, and after submission, it takes user to next step.
+
+const screenTypes = {
+    GUIDE_LIST: "guideList",
+    IN_PROGRESS: "inProgress",
+    COMPLETED: "completed",
+    GUIDE_EDIT: "guideEdit",
+    GUIDE_IN_PROGRESS: "guideInProgress"
+}
+
+// Variables for selection
+// Variable for guide being edited
+let currentGuideEdit = null;
+// Variable for guide being followed
+let currentGuideInProgress = null;
+
+// Variable for current screen
+let currentScreen = screenTypes.GUIDE_LIST;
+
+// SCREEN REFERENCES
+// Guide Edit Screen reference
+const guideEditScreen = document.getElementById("guideEditScreen");
+const guideListScreen = document.getElementById("guideListScreen");
+const inProgressScreen = document.getElementById("inProgressScreen");
+const guideInProgressScreen = document.getElementById("guideInProgressScreen");
+// Function for switching screens
+function switchScreen(screenType) {
+    // Hide all screens
+    // document.getElementById("guideListScreen").style.display = "none";
+    // document.getElementById("inProgressScreen").style.display = "none";
+    // document.getElementById("completedScreen").style.display = "none";
+    // document.getElementById("guideEditScreen").style.display = "none";
+    // document.getElementById("guideInProgressScreen").style.display = "none";
+    // // Show the selected screen
+    // if (screenType === screenTypes.GUIDE_LIST) {
+    //     document.getElementById("guideListScreen").style.display = "block";
+    // } else if (screenType === screenTypes.IN_PROGRESS) {
+    //     document.getElementById("inProgressScreen").style.display = "block";
+    // } else if (screenType === screenTypes.COMPLETED) {
+    //     document.getElementById("completedScreen").style.display = "block";
+    // } else if (screenType === screenTypes.GUIDE_EDIT) {
+    //     document.getElementById("guideEditScreen").style.display = "block";
+    // } else if (screenType === screenTypes.GUIDE_IN_PROGRESS) {
+    //     document.getElementById("guideInProgressScreen").style.display = "block";
+    // }
+    // Set the current screen variable
+    currentScreen = screenType;
+}
+
+// Function for creating unique ids for guides and steps
+let num = 0;
+function generateId() {
+    num++;
+    return num;
+}
+
+// Step "object"
+const Step = {
+    headline: "New Step",
+    paragraph: "Step description goes here.",
+    // "READ" or "SUBMISSION"
+    type: "READ"
+};
+// Guide "object"
+const Guide = {
+    id: null,
+    title: "New Guide",
+    steps: [{
+    headline: "New Step",
+    paragraph: "Step description goes here.",
+    // "READ" or "SUBMISSION"
+    type: "READ"
+}]
+};
+
+// Guide list
+let guideList = [];
+
+// Function for creating a new guide within the guide list
+// Connected to a PLUS button
+function createNewGuide() {
+    // Create a new guide object
+    // Id is generated based on timestamp
+    // Clone the guide object template
+    const newGuide = JSON.parse(JSON.stringify(Guide));
+    newGuide.id = generateId();
+    // Add the new guide to the guide list
+    addGuideToGuideList(newGuide); 
+}
+
+// Function for adding a guide to the guide list
+function addGuideToGuideList(guide) {
+    guideList.push(guide);
+}
+
+// Function for editing a guide
+function editGuide(guideId) {
+    // Switchover to the guide edit screen
+    switchScreen(screenTypes.GUIDE_EDIT);
+    // Set the current guide edit variable to the guide being edited
+    currentGuideEdit = guideList.find(guide => guide.id === guideId);
+    // Create the guide edit form based on the current guide edit variable
+    createGuideEditForm();
+}
+
+// Function that creates a form based on the current guide being edited, and allows for editing the guide
+function createGuideEditForm() {
+    // Create a div for the form
+    const formDiv = document.createElement("div");
+
+    // Create an input for the guide title
+    const titleInput = document.createElement("input");
+    titleInput.type = "text";
+    titleInput.value = currentGuideEdit.title;
+    formDiv.appendChild(titleInput);
+
+    // Create a div for containing the steps
+    const stepsDiv = document.createElement("div");
+    
+    // Function that creates a step input div
+    function createStepInput(stepNum, headline, paragraph, type) {
+        const stepDiv = document.createElement("div");
+        // Step Number
+        const stepNumDiv = document.createElement("div");
+        stepNumDiv.innerText = stepNum;
+        stepDiv.appendChild(stepNumDiv);
+        // Input for headline
+        const headlineInput = document.createElement("input");
+        headlineInput.type = "text";
+        headlineInput.value = headline;
+        stepDiv.appendChild(headlineInput);
+        // Textarea for paragraph
+        const paragraphInput = document.createElement("textarea");
+        paragraphInput.value = paragraph;
+        stepDiv.appendChild(paragraphInput);
+        // Select for type
+        const typeSelect = document.createElement("select");
+        const readOption = document.createElement("option");
+        readOption.value = "READ";
+        readOption.text = "Readthrough";
+        const submissionOption = document.createElement("option");
+        submissionOption.value = "SUBMISSION";
+        submissionOption.text = "Submission";
+        typeSelect.appendChild(readOption);
+        typeSelect.appendChild(submissionOption);
+        typeSelect.value = type;
+        stepDiv.appendChild(typeSelect);
+        // Delete Button
+        const deleteButton = document.createElement("button");
+        deleteButton.innerText = "Delete Step";
+        deleteButton.addEventListener("click", () => {
+            stepsDiv.removeChild(stepDiv);
+            // After deleting the step, update the step numbers of the remaining steps
+            for (let i = 0; i < stepsDiv.children.length; i++) {
+                const stepDiv = stepsDiv.children[i];
+                const stepNumDiv = stepDiv.children[0];
+                stepNumDiv.innerText = i + 1;
+            }
+        });
+        stepDiv.appendChild(deleteButton);
+        // Up and Down Buttons
+        const upButton = document.createElement("button");
+
+        // Add the step div to the steps div
+        stepsDiv.appendChild(stepDiv);
+    }
+
+    // Loop through the steps of the current guide being edited, and create inputs for each step
+    currentGuideEdit.steps.forEach((step, index) => {
+        createStepInput(index + 1, step.headline, step.paragraph, step.type);
+    });
+
+    formDiv.appendChild(stepsDiv);
+
+    // Create a button for adding a new step
+    const addStepButton = document.createElement("button");
+    addStepButton.innerText = "Add Step";
+    addStepButton.addEventListener("click", () => {
+        createStepInput(stepsDiv.children.length + 1, "New Step", "Step description goes here.", "READ");
+    });
+    formDiv.appendChild(addStepButton);
+    // Create a save button
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Save";
+    formDiv.appendChild(saveButton);
+    // Save Function
+    saveButton.addEventListener("click", () => {
+        // Update the current guide edit variable with the new values from the form
+        currentGuideEdit.title = titleInput.value;
+        currentGuideEdit.steps = [];
+        // Loop through the steps div, and update the steps of the current guide edit variable
+        for (let i = 0; i < stepsDiv.children.length; i++) {
+            const stepDiv = stepsDiv.children[i];
+            const headline = stepDiv.children[1].value;
+            const paragraph = stepDiv.children[2].value;
+            const type = stepDiv.children[3].value;
+            currentGuideEdit.steps.push({
+                headline,
+                paragraph,
+                type
+            });
+        }
+        renderGuideListScreen();
+    });
+    // Exit Button
+    const exitButton = document.createElement("button");
+    exitButton.innerText = "Exit";
+    formDiv.appendChild(exitButton);
+    exitButton.addEventListener("click", () => {
+        // Switch back to the guide list screen
+        switchScreen(screenTypes.GUIDE_LIST);
+        // Clear the current guide edit variable
+        currentGuideEdit = null;
+    });
+
+    // Add the form div to the guide edit screen [Remove previous form if it exists]
+    guideEditScreen.innerHTML = "";
+    guideEditScreen.appendChild(formDiv);
+}
+
+// Add a guide to the guide list for testing
+addGuideToGuideList({
+    id: generateId(),
+    title: "How to Make a Sandwich",
+    steps: [
+        {
+            headline: "Get Bread",
+            paragraph: "Get two slices of bread.",
+            type: "READ"
+        },
+        {
+            headline: "Get Meat",
+            paragraph: "Get two slices of meat.",
+            type: "SUBMISSION"
+        },
+        {
+            headline: "Assemble Sandwich",
+            paragraph: "Show Pic of completed sandwich.",
+            type: "SUBMISSION"
+        }
+    ]
+});
+
+function main() {
+    // Initially switch to the guide list screen
+    switchScreen(screenTypes.GUIDE_LIST);
+    // Render
+    renderGuideListScreen()
+}
+
+// Function that renders the guide list screen
+function renderGuideListScreen() {
+    guideListScreen.innerHTML = "";
+    // Function that creates a guide box for a guide
+    function createGuideBox(guide) {
+        // New div
+        const guideBox = document.createElement("div");
+        // Guide title
+        const guideTitle = document.createElement("h2");
+        guideTitle.innerText = guide.title;
+        guideBox.appendChild(guideTitle);
+        // Guide Edit Button
+        const editButton = document.createElement("button");
+        editButton.innerText = "Edit";
+        editButton.addEventListener("click", () => {
+            editGuide(guide.id);
+        }
+        );
+        guideBox.appendChild(editButton);
+        // Guide Start Button
+        const startButton = document.createElement("button");
+        startButton.innerText = "Start";
+        // Start Function
+        startButton.addEventListener("click", () => {
+            let newId = startGuide(guide.id);
+            continueGuide(newId);
+        });
+        guideBox.appendChild(startButton);
+        // Add the guide box to the guide list screen
+        guideListScreen.appendChild(guideBox);
+    }
+    // Create guide box for each guide in the guide list
+    guideList.forEach(guide => {
+        createGuideBox(guide);
+    }
+    );
+    // Button for creating a new guide
+    const newGuideButton = document.createElement("button");
+    newGuideButton.innerText = "Create New Guide";
+    newGuideButton.addEventListener("click", () => {
+        createNewGuide();
+        renderGuideListScreen();
+    });
+    guideListScreen.appendChild(newGuideButton);
+}
+
+// List of in-progress guides
+const inProgressGuides = [];
+
+// Function that adds a guide to the in-progress guide list
+function startGuide(guideId) {
+    const guide = guideList.find(guide => guide.id === guideId);
+    let newId = generateId();
+    if (guide) {
+        inProgressGuides.push({
+            id: newId,
+            title: guide.title,
+            steps: guide.steps,
+            images: {},
+            current_page: 0,
+            progress: 0
+        });
+    }
+    return newId
+}
+
+// Function for continuing a guide
+function continueGuide(guideId) {
+    // Switchover to the guide reading screen
+    switchScreen(screenTypes.GUIDE_IN_PROGRESS);
+    // Set the current guide in progress variable to the guide being progressed
+    currentGuideInProgress = inProgressGuides.find(guide => guide.id === guideId);
+    // Progress on the current guide
+    renderProgress();
+}
+
+function renderProgress() {
+    // Empty the guide in progress screen
+    guideInProgressScreen.innerHTML = "";
+    // Create a div for the content of current step
+    const stepContent = document.createElement("div");
+    const currentStep = currentGuideInProgress.steps[currentGuideInProgress.current_page];
+    // Create a headline for the step
+    const stepHeadline = document.createElement("h2");
+    // Append number and title of step to the headline
+    stepHeadline.innerText = currentGuideInProgress.current_page + 1 + ": " + currentStep.headline;
+    stepContent.appendChild(stepHeadline);
+    // Append the paragraph for the step to the content div
+    const stepParagraph = document.createElement("p");
+    stepParagraph.innerText = currentStep.paragraph;
+    stepContent.appendChild(stepParagraph);
+    // If the step type is SUBMISSION, add an image submission button
+    if (currentStep.type === "SUBMISSION") {
+        const imageInput = document.createElement("input");
+        imageInput.type = "file";
+        imageInput.accept = "image/*";
+        // If there is already an image submitted for the current page, show the image instead of the submission button
+        if (currentGuideInProgress.images[currentGuideInProgress.current_page]) {
+            const submittedImage = document.createElement("img");
+            submittedImage.src = currentGuideInProgress.images[currentGuideInProgress.current_page];
+            stepContent.appendChild(submittedImage);
+        } else {
+            stepContent.appendChild(imageInput);
+        }
+        // Connect image submission to adding the image to .images
+        // using the current page as the key for the image
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                currentGuideInProgress.images[currentGuideInProgress.current_page] = reader.result;
+            }
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        });
+    } else {
+        // Do Nothing
+    }
+    // Progress Bar
+    const progressBar = document.createElement("progress");
+    progressBar.value = 1 + currentGuideInProgress.progress;
+    // Max is the total amount of steps
+    progressBar.max = currentGuideInProgress.steps.length;
+    // Text in progress bar showing current progress
+    const progressText = document.createElement("p");
+    progressText.innerText = `Progress: ${currentGuideInProgress.progress} / ${currentGuideInProgress.steps.length}`;
+    progressBar.appendChild(progressText);
+    stepContent.appendChild(progressBar);
+    // Back and Next Buttons for switching the current pages
+    const backButton = document.createElement("button");
+    backButton.innerText = "Back";
+    const nextButton = document.createElement("button");
+    nextButton.innerText = "Next";
+    stepContent.appendChild(backButton);
+    stepContent.appendChild(nextButton);
+    backButton.addEventListener("click", () => {
+        if (currentGuideInProgress.current_page > 0) {
+            currentGuideInProgress.current_page--;
+            renderProgress();
+        }
+    });
+    nextButton.addEventListener("click", () => {
+        if (currentGuideInProgress.current_page < currentGuideInProgress.steps.length - 1) {
+            currentGuideInProgress.current_page++;
+            // Get progress up to the current page, up until the last submitted image
+            let tempProgress = 0;
+            for (let i = 0; i < currentGuideInProgress.current_page; i++) {
+                if (currentGuideInProgress.steps[i].type === "SUBMISSION") {
+                    if (currentGuideInProgress.images[i]) {
+                        tempProgress++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    tempProgress++;
+                }
+            }
+            currentGuideInProgress.progress = Math.max(currentGuideInProgress.progress, tempProgress);
+            renderProgress();
+        }
+    });
+    // Append the buttons to the content div
+    stepContent.appendChild(backButton);
+    stepContent.appendChild(nextButton);
+    // Append the step content to the guide in progress screen
+    guideInProgressScreen.appendChild(stepContent);
+}
+main();

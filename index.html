@@ -5,39 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guidemark</title>
     <!-- MY CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="simple.css">
 </head>
 <body>
-    <!-- At the top, Header Bar Gray -->
-    <div id="headerBar" class="">
-        <!-- To the Right, Circular Profile Icon -->
-        <!-- Allign it to the right-side of the screen -->
-        <button id="ProfileIcon" class="">Profile</button>
-    </div>
-
-    <div id="Middle">
-    <!-- Screen -->
-    <div class="screen">
-        <!-- Boxes that are 1.7x taller than they are wide-->
-        <!-- spaced in a grid like manner, amount fitting on a row depending on the size of screen -->
-        <div class="guide">
-            <div class="guideTitle"> TITLE </div>
-            <button class="deleteButton">Delete</button>
-            <button class="editButton">Edit</button>
-            <button class="startButton">Start Guide</button>
-        </div>
-    </div>
-    </div>
-
-    <!-- At the bottom, Radios buttons, orange when selected-->
-    <div id="buttonBar">
-        <input type="radio" id="guideList" name="view" value="guideList" checked>
-        <label for="guideList">Guide List</label>
-        <input type="radio" id="inProgress" name="view" value="inProgress">
-        <label for="inProgress">In Progress</label>
-        <input type="radio" id="completed" name="view" value="completed">
-        <label for="completed">Completed</label>
-    </div>
-
+    <div id="guideEditScreen" class="screen"></div>
+    <div id="guideListScreen" class="screen"></div>
+    <div id="inProgressScreen" class="screen"></div>
+    <div id="guideInProgressScreen" class="screen"></div>
+    <script src="script.js"></script>
 </body>
 </html>

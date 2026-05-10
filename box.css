@@ -44,6 +44,7 @@ body {
       flex-direction: column;
       font-family: 'Press Start 2P', monospace;
       position: relative;
+      -webkit-text-stroke: 0.5px rgb(122, 122, 122);
 }
 
 .screen {
@@ -69,6 +70,9 @@ body {
       gap: 2.5rem;
       text-align: center;
       padding: 1rem;
+}
+.guide-box button {
+    font-size: larger;
 }
 .edit-button {
     background-color: yellow;
@@ -99,14 +103,47 @@ body {
 #guideEditScreen {
     background-color: red;
 }
+#guideEditScreen button {
+    margin: 4px;
+    margin-bottom: 10px;
+    padding: 3%;
+    font-size: large;
+}
+#guideEditScreen input {
+    margin: 4px;
+    margin-bottom: 10px;
+    padding: 3%;
+    font-size: larger;
+}
+#guideEditScreen textarea {
+  width: 100%;
+  height: 100px;
+  box-sizing: border-box;
+  resize: none;
+}
+#guideEditScreen select {
+    font-size: large;
+    border: 4px solid black;
+}
 #guideListScreen {
     background-color: transparent;
+}
+#guideListScreen button {
+    margin: auto;
+    padding: 10%;
+    font-size: larger;
 }
 #guideInProgressScreen {
     background-color: blue;
 }
+
+#guideInProgressScreen button {
+    margin: auto;
+    padding: 10%;
+    font-size: larger;
+}
 #inProgressScreen {
-    background-color: yellow;
+    background-color: yellowgreen;
 }
 
 #breakSpace {
@@ -143,4 +180,33 @@ input[type="radio"]:checked + label {
 }
 input[type="radio"] {
   display: none;
+}
+
+/* Base style for the container */
+progress {
+  width: 100%;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Chrome, Safari, and newer Edge styling */
+progress::-webkit-progress-bar {
+  background-color: #eee;
+}
+progress::-webkit-progress-value {
+  background-color: #4caf50;
+}
+
+/* Firefox styling */
+progress::-moz-progress-bar {
+  background-color: #4caf50;
+}
+
+.small-image {
+    border: 4px solid black;
+}
+
+.complete {
+    background-color: green;
 }

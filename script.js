@@ -121,7 +121,7 @@ function generateId() {
 // Step "object"
 const Step = {
     headline: "New Step",
-    paragraph: "Step description goes here.",
+    paragraph: "Step description goes here. Readthrough = read step. Submission = image submission.",
     // "READ" or "SUBMISSION"
     type: "READ"
 };
@@ -131,7 +131,7 @@ const Guide = {
     title: "New Guide",
     steps: [{
     headline: "New Step",
-    paragraph: "Step description goes here.",
+    paragraph: "Step description goes here. Readthrough = read step. Submission = image submission.",
     // "READ" or "SUBMISSION"
     type: "READ"
 }]
@@ -240,7 +240,7 @@ function createGuideEditForm() {
     const addStepButton = document.createElement("button");
     addStepButton.innerText = "Add Step";
     addStepButton.addEventListener("click", () => {
-        createStepInput(stepsDiv.children.length + 1, "New Step", "Step description goes here.", "READ");
+        createStepInput(stepsDiv.children.length + 1, "New Step", "Step description goes here. Readthrough = read step. Submission = image submission.", "READ");
     });
     formDiv.appendChild(addStepButton);
     // Create a save button
@@ -266,6 +266,34 @@ function createGuideEditForm() {
         }
         renderGuideListScreen();
     });
+    // Create a save button
+    const save2Button = document.createElement("button");
+    save2Button.innerText = "Save + Exit";
+    formDiv.appendChild(save2Button);
+    // Save Function
+    save2Button.addEventListener("click", () => {
+        // Update the current guide edit variable with the new values from the form
+        currentGuideEdit.title = titleInput.value;
+        currentGuideEdit.steps = [];
+        // Loop through the steps div, and update the steps of the current guide edit variable
+        for (let i = 0; i < stepsDiv.children.length; i++) {
+            const stepDiv = stepsDiv.children[i];
+            const headline = stepDiv.children[1].value;
+            const paragraph = stepDiv.children[2].value;
+            const type = stepDiv.children[3].value;
+            currentGuideEdit.steps.push({
+                headline,
+                paragraph,
+                type
+            });
+        }
+        renderGuideListScreen();
+        // Switch back to the guide list screen
+        switchScreen(screenTypes.GUIDE_LIST);
+        // Clear the current guide edit variable
+        currentGuideEdit = null;
+    });
+    
     // Exit Button
     const exitButton = document.createElement("button");
     exitButton.innerText = "Exit";
@@ -281,29 +309,6 @@ function createGuideEditForm() {
     guideEditScreen.innerHTML = "";
     guideEditScreen.appendChild(formDiv);
 }
-
-// Add a guide to the guide list for testing
-addGuideToGuideList({
-    id: generateId(),
-    title: "How to Make a Sandwich",
-    steps: [
-        {
-            headline: "Get Bread",
-            paragraph: "Get two slices of bread.",
-            type: "READ"
-        },
-        {
-            headline: "Get Meat",
-            paragraph: "Get two slices of meat.",
-            type: "SUBMISSION"
-        },
-        {
-            headline: "Assemble Sandwich",
-            paragraph: "Show Pic of completed sandwich.",
-            type: "SUBMISSION"
-        }
-    ]
-});
 
 function main() {
     // Initially switch to the guide list screen
@@ -397,6 +402,24 @@ function continueGuide(guideId) {
 }
 
 function renderProgress() {
+    // Function for saving progress
+    function saveProgress() {
+        // Get progress up to the current page, up until the last submitted image
+        let tempProgress = 0;
+        for (let i = 1; i <= currentGuideInProgress.current_page; i++) {
+            if (currentGuideInProgress.steps[i].type === "SUBMISSION") {
+                if (currentGuideInProgress.images[i]) {
+                    tempProgress++;
+                } else {
+                    break;
+                }
+            } else {
+                tempProgress++;
+            }
+        }
+        currentGuideInProgress.progress = Math.max(currentGuideInProgress.progress, tempProgress);
+        renderProgress();
+    }
     // Empty the guide in progress screen
     guideInProgressScreen.innerHTML = "";
     // Create a div for the content of current step
@@ -413,6 +436,7 @@ function renderProgress() {
     stepContent.appendChild(stepParagraph);
     // If the step type is SUBMISSION, add an image submission button
     if (currentStep.type === "SUBMISSION") {
+        let isImage = false;
         const imageInput = document.createElement("input");
         imageInput.type = "file";
         imageInput.accept = "image/*";
@@ -420,22 +444,32 @@ function renderProgress() {
         if (currentGuideInProgress.images[currentGuideInProgress.current_page]) {
             const submittedImage = document.createElement("img");
             submittedImage.src = currentGuideInProgress.images[currentGuideInProgress.current_page];
+            // Set size to small
+            submittedImage.class = "small-image";
+            submittedImage.width = 100;
+            submittedImage.height = 100;
             stepContent.appendChild(submittedImage);
+            isImage = true;
         } else {
             stepContent.appendChild(imageInput);
         }
         // Connect image submission to adding the image to .images
         // using the current page as the key for the image
-        imageInput.addEventListener("change", () => {
+        function readImage() {
+
             const file = imageInput.files[0];
             const reader = new FileReader();
             reader.onloadend = () => {
                 currentGuideInProgress.images[currentGuideInProgress.current_page] = reader.result;
+                saveProgress();
             }
+            
             if (file) {
                 reader.readAsDataURL(file);
             }
-        });
+        }
+        imageInput.addEventListener("change", () => readImage());
+        
     } else {
         // Do Nothing
     }
@@ -445,9 +479,9 @@ function renderProgress() {
     // Max is the total amount of steps
     progressBar.max = currentGuideInProgress.steps.length;
     // Text in progress bar showing current progress
-    const progressText = document.createElement("p");
-    progressText.innerText = `Progress: ${currentGuideInProgress.progress} / ${currentGuideInProgress.steps.length}`;
-    progressBar.appendChild(progressText);
+    const progressText = document.createElement("div");
+    progressText.innerText = `Progress: ${currentGuideInProgress.progress + 1} / ${currentGuideInProgress.steps.length}`;
+    stepContent.appendChild(progressText);
     stepContent.appendChild(progressBar);
     // Back and Next Buttons for switching the current pages
     const backButton = document.createElement("button");
@@ -467,7 +501,7 @@ function renderProgress() {
             currentGuideInProgress.current_page++;
             // Get progress up to the current page, up until the last submitted image
             let tempProgress = 0;
-            for (let i = 0; i < currentGuideInProgress.current_page; i++) {
+            for (let i = 1; i <= currentGuideInProgress.current_page; i++) {
                 if (currentGuideInProgress.steps[i].type === "SUBMISSION") {
                     if (currentGuideInProgress.images[i]) {
                         tempProgress++;
@@ -478,8 +512,7 @@ function renderProgress() {
                     tempProgress++;
                 }
             }
-            currentGuideInProgress.progress = Math.max(currentGuideInProgress.progress, tempProgress);
-            renderProgress();
+           saveProgress();
         }
     });
     // Append the buttons to the content div
@@ -492,6 +525,9 @@ function renderProgress() {
         switchScreen(screenTypes.IN_PROGRESS);
         currentGuideInProgress = null;
     });
+    if (currentGuideInProgress.progress+1 === currentGuideInProgress.steps.length) {
+        exitButton.className += " complete";
+    }
     stepContent.appendChild(exitButton);
     // Append the step content to the guide in progress screen
     guideInProgressScreen.appendChild(stepContent);
@@ -512,7 +548,7 @@ function renderInProgressGuideList() {
         progressBar.max = guide.steps.length;
         guideBox.appendChild(progressBar);
         const progressText = document.createElement("div");
-        
+
         const continueButton = document.createElement("button");
         continueButton.innerText = "Continue";
         continueButton.addEventListener("click", () => {
@@ -524,7 +560,8 @@ function renderInProgressGuideList() {
         // Label it "complete" if the guide is fully completed, and "delete" if it's not fully completed
         const deleteButton = document.createElement("button");
         if (guide.progress + 1 === guide.steps.length) {
-            deleteButton.innerText = "Complete";
+            deleteButton.innerText = "Complete!";
+            deleteButton.className += " complete";
         } else {
             deleteButton.innerText = "Delete";
         }
@@ -548,5 +585,122 @@ guideListRadio.addEventListener("change", () => {
 inProgressRadio.addEventListener("change", () => {
     switchScreen(screenTypes.IN_PROGRESS);
 });
+
+// PREFABRICATED GUIDES //
+
+// CLEANING DISHES
+addGuideToGuideList({
+    id: generateId(),
+    title: "CLEANING DISHES IN THE SINK",
+    steps: [
+        {
+            headline: "Go to Sink",
+            paragraph: "Go to Sink. Wear gloves. Equip Sponge.",
+            type: "READ"
+        },
+        {
+            headline: "SCRUB!",
+            paragraph: "Scrub the dishes with the sponge, hot water, and dish soap. Put the clean dishes aside away from the sink one-by-one.",
+            type: "READ"
+        },
+        {
+            headline: "Completion GOAL",
+            paragraph: "Continue cleaning until all dishes are cleaned. Submit a picture of the clean sink. No dishes remaining.",
+            type: "SUBMISSION"
+        }
+    ]
+});
+
+// MAKING A GRILLED CHEESE SANDWICH
+addGuideToGuideList({
+    id: generateId(),
+    title: "GRILLED CHEESE QUEST",
+    steps: [
+        {
+            headline: "ACQUIRE BREAD",
+            paragraph: "Go acquire 2 slices of square bread.",
+            type: "READ"
+        },
+        {
+            headline: "ACQUIRE CHEESE",
+            paragraph: "Acquire a cheese single. Alternatively, acquire 50g of shredded cheese.",
+            type: "READ"
+        },
+        {
+            headline: "ASSEMBLE",
+            paragraph: "Place cheese between the two slices of bread. Submit a photo of the ultimatum assembly",
+            type: "SUBMISSION"
+        },
+        {
+            headline: "FORGE",
+            paragraph: "Aggregate a heated metal surface with butter. Place the bread figure on it.",
+            type: "READ"
+        },
+        {
+            headline: "FLIP",
+            paragraph: "Once one side reahes the perfect texture-taste equilibrium, flip the bread figure pi radians.",
+            type: "READ"
+        },
+        {
+            headline: "ADMIRE",
+            paragraph: "Once both sides are done. Retract the bread figure. Admire it. Submit a photo of the masterpiece.",
+            type: "SUBMISSION"
+        },
+        {
+            headline: "EAT",
+            paragraph: "Yum, Yum, Yum. As the Humans say... Truly Marvelous.",
+            type: "READ"
+        }
+
+    ]
+});
+
+// MORAL BOOST
+addGuideToGuideList({
+    id: generateId(),
+    title: "NEW ENCOUNTERS",
+    steps: [
+        {
+            headline: "Exchange",
+            paragraph: "Go talk to a stranger. After a minute of conversation, high-five them.",
+            type: "READ"
+        },
+        {
+            headline: "King of TriParity",
+            paragraph: "Go talk to a stranger and challenge them to rock-paper-scissors. If you lose, repeat with another stranger.",
+            type: "READ"
+        },
+        {
+            headline: "Memories",
+            paragraph: "Go take a picture with a stranger. Make a funny pose. Sumbit the photo.",
+            type: "SUBMISSION"
+        }
+    ]
+});
+
+// EXERCISE
+addGuideToGuideList({
+    id: generateId(),
+    title: "INFINITE STRENGTH GLITCH",
+    steps: [
+        {
+            headline: "Run",
+            paragraph: "Run a distance of 100m.",
+            type: "READ"
+        },
+        {
+            headline: "Push ups",
+            paragraph: "Extends arms to raise oneself against the pull of a celestial body. Retract. Do this 30 times.",
+            type: "READ"
+        },
+        {
+            headline: "Shower",
+            paragraph: "Submit a photo of the shampoo bottle.",
+            type: "SUBMISSION"
+        }
+    ]
+});
+
+
 
 main();

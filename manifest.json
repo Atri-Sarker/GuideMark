@@ -1,7 +1,7 @@
 {
   "name": "Guidemark",
   "short_name": "Guidemark",
-  "display": "standalone",
+  "display": "fullscreen",
   "scope": "./",
   "start_url": "./index.html",
   "theme_color": "#000000",

@@ -1,5 +1,43 @@
+:root {
+    --bg-dark: #02030b;
+    --bg-deep: #070b1a;
+    --bg-soft: #0f1324;
+
+    --accent-cyan: #58f0ff;
+    --accent-blue: #7c75ff;
+    --accent-magenta: #d36eff;
+    --accent-yellow: #f2d64b;
+
+    --solid-white: #ffffff;
+    --solid-black: #000000;
+    --solid-panel: #0d1124;
+    --solid-panel-soft: rgba(255, 255, 255, 0.08);
+
+    --text-main: #eef6ff;
+    --text-muted: #8fa6c2;
+
+    --gradient-page: radial-gradient(circle at top, rgba(88, 240, 255, 0.14), transparent 25%), linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-deep) 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 0, 0, 0.08), rgba(129, 168, 102, 0.534));
+    --gradient-accent: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    --gradient-glow: radial-gradient(circle, rgba(206, 200, 148, 0.24), transparent 80%);
+     --rainbow-border:
+      conic-gradient(from 0deg,
+        var(--accent-pink),
+        var(--accent-blue),
+        var(--accent-cyan),
+        var(--accent-yellow),
+        var(--accent-green),
+        var(--accent-magenta),
+        var(--accent-pink));
+}
+
+@keyframes rainbow-border-move {
+    from { background-position: center, 0% 0%; }
+    to { background-position: center, 100% 100%; }
+}
+
 body {
-      background: #000510;
+      background: var(--gradient-page);
       color: white;
       min-height: 80vh;
       display: flex;
@@ -9,7 +47,7 @@ body {
 }
 
 .screen {
-    background: white;
+    background: transparent;
     flex: 1;
     display: grid;
     padding-left: 24px;
@@ -18,8 +56,9 @@ body {
 
 /* Rectangle boxes, with padding and rounded corners */
 .guide-box {
-    background-color: aliceblue;
-    border: #000510 solid 6px;
+    background: var(--gradient-card);
+    border: 8px solid black;
+
     margin-bottom: 3px;
     margin-top: 3px;
      position: relative;
@@ -32,7 +71,12 @@ body {
       padding: 1rem;
 }
 .edit-button {
-    background-color: rgb(182, 215, 245);
+    background-color: yellow;
+    border: #000510 solid 6px;
+    font-size: larger;
+}
+.start-button {
+    background-color: green;
     border: #000510 solid 6px;
     font-size: larger;
 }
@@ -56,7 +100,7 @@ body {
     background-color: red;
 }
 #guideListScreen {
-    background-color: green;
+    background-color: transparent;
 }
 #guideInProgressScreen {
     background-color: blue;

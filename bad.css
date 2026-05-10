@@ -1,0 +1,156 @@
+:root {
+    --bg: #02030b;
+    --panel: rgba(10, 14, 32, 0.82);
+    --panel-strong: rgba(20, 28, 66, 0.92);
+    --accent: #58f0ff;
+    --accent-2: #8c6dff;
+    --text: #eef6ff;
+    --muted: #8fa6c2;
+    --border: rgba(88, 240, 255, 0.22);
+    --shadow: 0 20px 80px rgba(0, 0, 0, 0.35);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    min-height: 100%;
+    background: radial-gradient(circle at top, rgba(88, 240, 255, 0.14), transparent 25%),
+                linear-gradient(180deg, #02030b 0%, #070b1a 100%);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", sans-serif;
+    overflow-x: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+}
+
+.screen {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    box-shadow: var(--shadow);
+    padding: 1.6rem;
+    display: grid;
+    gap: 1.2rem;
+    min-height: 60vh;
+    backdrop-filter: blur(18px);
+}
+
+.screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(88, 240, 255, 0.12), transparent 40%);
+}
+
+.guide-box,
+.new-guide-button {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 22px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    padding: 1.4rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.guide-box:hover,
+.new-guide-button:hover {
+    transform: translateY(-4px);
+    border-color: rgba(88, 240, 255, 0.38);
+    box-shadow: 0 24px 72px rgba(0, 0, 0, 0.28);
+}
+
+.guide-box::after,
+.new-guide-button::after {
+    content: "";
+    position: absolute;
+    inset: -30% 60% auto -30%;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, rgba(88, 240, 255, 0.24), transparent 60%);
+    filter: blur(18px);
+    pointer-events: none;
+}
+
+.edit-button {
+    background: linear-gradient(135deg, #5bf7ff, #7c75ff);
+    border: none;
+    color: #02030b;
+    font-size: 1rem;
+    padding: 0.9rem 1.4rem;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 12px 26px rgba(92, 248, 255, 0.16);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.edit-button:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+}
+
+#breakSpace {
+    height: 70px;
+}
+
+#footerRadio {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    width: min(92vw, 640px);
+    background: rgba(5, 9, 24, 0.94);
+    border: 1px solid rgba(88, 240, 255, 0.18);
+    border-radius: 999px;
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+    display: flex;
+    overflow: hidden;
+    z-index: 50;
+}
+
+label {
+    flex: 1;
+    text-align: center;
+    padding: 1rem 0.85rem;
+    font-size: 1rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease;
+    user-select: none;
+}
+
+input[type="radio"]:checked + label {
+    color: var(--text);
+    background: linear-gradient(135deg, rgba(88, 240, 255, 0.18), rgba(140, 109, 255, 0.18));
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+@media (max-width: 720px) {
+    body {
+        padding: 1rem;
+    }
+
+    .screen {
+        min-height: 55vh;
+        padding: 1.2rem;
+    }
+
+    label {
+        font-size: 0.95rem;
+    }
+}

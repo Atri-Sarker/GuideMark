@@ -60,7 +60,8 @@ const classNames = {
     ADD_STEP_BUTTON: "add-step-button",
     SAVE_BUTTON: "save-button",
     EXIT_BUTTON: "exit-button",
-    NEW_GUIDE_BUTTON: "new-guide-button"
+    NEW_GUIDE_BUTTON: "new-guide-button",
+    START_BUTTON: "start-button"
 }
 
 // Variables for selection
@@ -502,6 +503,7 @@ function renderInProgressGuideList() {
     // For each in-progress guide, create a div showing the title, progress bar, and a continue button that takes you to the guide in progress screen for that guide
     inProgressGuides.forEach(guide => {
         const guideBox = document.createElement("div");
+        guideBox.className = classNames.GUIDE_BOX;
         const guideTitle = document.createElement("h2");
         guideTitle.innerText = guide.title;
         guideBox.appendChild(guideTitle);
@@ -509,6 +511,8 @@ function renderInProgressGuideList() {
         progressBar.value = guide.progress +  1;
         progressBar.max = guide.steps.length;
         guideBox.appendChild(progressBar);
+        const progressText = document.createElement("div");
+        
         const continueButton = document.createElement("button");
         continueButton.innerText = "Continue";
         continueButton.addEventListener("click", () => {
